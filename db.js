@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const DBurl="mongodb+srv://abdulmunaf1226_db_user:qKstGAbSt8g9avEo@cluster0.uh2p9ui.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+//const DBurl="?retryWrites=true&w=majority&appName=Cluster0"
 
 mongoose
   .connect(DBurl)
