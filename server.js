@@ -19,8 +19,11 @@ app.get("/courses",(req, res)=>{
 app.get("/courses/:id/", (req, res) => {
   console.log(req.params);
   let course = courses.find(course=>course.id==parseInt(req.params.id)) 
-    console.log("course", course)
     res.send(course)
 });
+
+app.post("/create",(req, res)=>{
+  res.send("Create Post")
+})
 
 app.listen(8081); 
