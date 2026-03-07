@@ -1,5 +1,7 @@
-const ProductModel = import("../models/ProductsModel")
-const {createFactory}= require("../utils/resourceFactory");
+// const ProductModel = import("../models/ProductsModel")
+const UserModel = require("../models/UserModel");
+const ProductModel = require("../models/ProductsModel");
+const {createFactory, getAllFactory, getFactory}= require("../utils/resourceFactory");
 
 // const createProduct = async (req, res) => {
 //     try {
@@ -19,29 +21,31 @@ const {createFactory}= require("../utils/resourceFactory");
 //     }
 // }
 
-const getAllProducts = async (req, res) => {
-    try {
-        // finding the user
-        const products = await ProductModel.find()
+const getAllProducts= getAllFactory(ProductModel);
+
+// const getAllProducts = async (req, res) => {
+//     try {
+//         // finding the user
+//         const products = await ProductModel.find()
         
-        // if user is present -> send the resp
-        if (products.length!=0) {
-            res.status(200).json({
-                message: products
-            })
-            // if it's not there then send user not found 
-        } else {
-            res.status(404).json({
-                message: "did not get the Products"
-            })
-        }
-    } catch (err) {
-        res.status(500).json({
-            status: "Internal server error",
-            message: err.message
-        })
-    }
-}
+//         // if user is present -> send the resp
+//         if (products.length!=0) {
+//             res.status(200).json({
+//                 message: products
+//             })
+//             // if it's not there then send user not found 
+//         } else {
+//             res.status(404).json({
+//                 message: "did not get the Products"
+//             })
+//         }
+//     } catch (err) {
+//         res.status(500).json({
+//             status: "Internal server error",
+//             message: err.message
+//         })
+//     }
+// }
 
 // const updateProduct = async (req, res) =>{
 //     try {
@@ -86,31 +90,33 @@ const getAllProducts = async (req, res) => {
 //     }
 // }
 
-const getProduct = async (req, res)=>{
-    try{
-        const id = req.param.id;
-        const product = await ProductModel.findById(id);
-        if (product) {
-            res.status(200).json({
-                message: product
-            })            
-        }else{
-            res.status(404).json({
-                message: "Did not get the user"
-            })
-        }
-    }catch(err){
-        res.status(500).json({
-            status: "Internal Server Error",
-            message: err.message
-        })
+// const getProduct = async (req, res)=>{
+//     try{
+//         const id = req.param.id;
+//         const product = await ProductModel.findById(id);
+//         if (product) {
+//             res.status(200).json({
+//                 message: product
+//             })            
+//         }else{
+//             res.status(404).json({
+//                 message: "Did not get the user"
+//             })
+//         }
+//     }catch(err){
+//         res.status(500).json({
+//             status: "Internal Server Error",
+//             message: err.message
+//         })
 
-    }
-}
+//     }
+// }
+
+const getProduct = getFactory(ProductModel)
 
 const createProduct = createFactory(ProductModel);
 
 module.exports={
-    getProduct, getAllProducts, createProduct
+    getAllProducts, createProduct, getProduct, getAllProducts
 }
 

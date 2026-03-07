@@ -3,37 +3,27 @@ const mongoose=require("mongoose");
 let productSchemaObject = {
     name: {
         type: String,
-        required: true,
-        minLength:[4, "Product name should above min. 4 charchters"]
+        required: [true,"name is required"],
+        minlength: [4, "product name should atleast have four characters"],
     },
-    price:{
+    price: {
         type: Number,
-        required: true,
-        min: [0, "Price can't be negative"]
+        required: [true,"price is required"],
+        min: [0, "price can't be negative"]
     },
-    discount:{
+    discount: {
         type: Number,
-        default: 0,
-        validate:[function(){
-            return this.price>=this.discount
-        }, "discount can't be more than price"]
+        default: [0,"discount is required"],
+        validate: [function () {
+            return this.price >= this.discount;
+        }, "discount can't be more then the price"]
     },
-    brand:String,
-    description:String,
-    category:{
+    description: String,
+    brand: String,
+    category: {
         type: String,
-        required: true
-    },
-    skunumber:{
-    
-    },
-    createAt: {
-        type: Date,
-        default: Date.now()
-    },
-    role: {
-        type: String,
-        default: "product"
+        required: true,
+        default: "category"
     }
 }
 const productSchema = new mongoose.Schema(productSchemaObject);
@@ -42,14 +32,15 @@ const productSchema = new mongoose.Schema(productSchemaObject);
 productSchema.pre("save", function () {
     this.confirmPassword = undefined;
 })
-const roles = ["admin", "buyer", "seller"];
-productSchema.pre("save", function (next) {
-    let isPresent = roles.find((cRole) => { return cRole == this.role })
-    if (isPresent == undefined) {
-        const error = new Error("role is invalid");
-        next(error);
-    }
-})
+const roles = ["admin", "buyer", "seller", "product"];
+// productSchema.pre("save", function (next) {
+//     let isPresent = roles.find((cRole) => { return cRole == this.role })
+//     return next();
+//     if (isPresent == undefined) {
+//         const error = new Error("role is invalid");
+//         next(error);
+//     }
+// })
 
     // USERMODEL 
     // const UserModel = mongoose.model("MarchUserModel", userSchema);
@@ -59,11 +50,16 @@ productSchema.pre("save", function (next) {
     const catgories  = ["electronics","furniture","clothing","educational"];
     productSchema.pre("save", function (next) {
         let isPresent = catgories.find((cCategory) => { return cCategory == this.category })
-
         if (isPresent == undefined) {
             const error = new Error("category is invalid");
             next(error);
         }
+        return next();
+    })
+
+    productSchema.pre("findOne", function(next){
+        this.select("-__v");
+        return next();
     })
 
 

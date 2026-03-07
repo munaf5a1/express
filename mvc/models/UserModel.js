@@ -1,54 +1,53 @@
-const mongoose=require("mongoose");
-/*********************userSchema**************************/
-let userSchemaObject = {
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        require: true,
-        minLength: 8
-    },
-    confirmPassword: {
-        type: String,
-        require: true,
-        minLength: 8,
-        validate: function () {
-            return this.password == this.confirmPassword;
-        }
-    },
-    createAt: {
-        type: Date,
-        default: Date.now()
-    },
-    role: {
-        type: String,
-        default: "user"
-    }
-}
-const userSchema = new mongoose.Schema(userSchemaObject);
+const mongoose = require("mongoose");
 
-/**********************pre-hooks*****************/
-userSchema.pre("save", function () {
-    this.confirmPassword = undefined;
-})
-const roles = ["admin", "buyer", "seller"];
+const roles = ["admin", "buyer", "seller", "user"];
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+
+  password: {
+    type: String,
+    required: true,
+    minlength: 8
+  },
+
+  confirmPassword: {
+    type: String,
+    required: true,
+    minlength: 8,
+    validate: {
+      validator: function () {
+        return this.password === this.confirmPassword;
+      },
+      message: "Passwords do not match"
+    }
+  },
+
+  createdAt: { type: Date, default: Date.now },
+
+  role: { type: String, default: "user" }
+});
+
+// remove confirmPassword before saving to DB
 userSchema.pre("save", function (next) {
-    let isPresent = roles.find((cRole) => { return cRole == this.role })
-    if (isPresent == undefined) {
-        const error = new Error("role is invalid");
-        next(error);
-    }
-})
+  this.confirmPassword = undefined;
+  next();
+});
 
-// USERMODEL 
-// const UserModel = mongoose.model("MarchUserModel", userSchema);
-const UserModel=mongoose.model("UserModel", userSchema)
+// validate role
+userSchema.pre("save", function (next) {
+  if (!roles.includes(this.role)) {
+    return next(new Error("role is invalid"));
+  }
+  next();
+});
 
+// hide sensitive fields on find queries
+userSchema.pre("findOne", function (next) {
+  this.select("-password -confirmPassword -__v");
+  next();
+});
 
+const UserModel = mongoose.model("UserModel", userSchema);
 module.exports = UserModel;

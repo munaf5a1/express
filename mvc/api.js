@@ -19,22 +19,22 @@ mongoose.connect(dbUrl)
         console.log("connected to db")
     }).catch(err => console.log(err))
 /************************************/
-const { getAllUsers, createUser, updateUser, deleteUser } = require("./controllers/UserController");
+const { getAllUsers, createUser, updateUser, deleteUser, getUser } = require("./controllers/UserController");
 const { getProduct, getAllProducts, createProduct } = require("./controllers/ProductController");
 const {sanityMiddleWare}=require("./middleware/sanityReqObj");
 /**********payload -> req.body**************/
 app.use(express.json());
 
 // app.post("/api/v1/user", sanityMiddleWare, createUser);// profile page -> user
-app.post("/api/user", sanityMiddleWare, createUser);
+app.post("/api/v1/user", sanityMiddleWare, createUser);
 
 app.get("/api/v1/user", getAllUsers);
 // 2. get the user
-// app.get("/api/v1/user/:id", getUser);
+app.get("/api/v1/user/:id", getUser);
 // 3. update the user
 app.patch("/api/v1/user/:id", updateUser);
 // 4 delete the user
-app.delete("/api/v1/user/:id", deleteUser);
+// app.delete("/api/v1/user/:id", deleteUser);
 /***********************product*********************/
 //1. create a product
 // app.post("/api/v1/product", sanityMiddleWare, createProduct);// profile page -> user
